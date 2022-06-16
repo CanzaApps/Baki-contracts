@@ -3,10 +3,10 @@
 pragma solidity ^0.8.13;
 
 import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
-import "./interfaces/IVault.sol";
+//import "./interfaces/IVault.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 
-contract Vault is IVault, Ownable {
+contract Vault is Ownable {
     IERC20 public immutable token;
     uint256 public totalSupply;
     mapping(address => Vault) public vaults;
@@ -14,6 +14,15 @@ contract Vault is IVault, Ownable {
     constructor(address _token) {
         token = IERC20(_token);
     }
+
+    struct Vault {
+        uint256 collateralAmount; // The amount of collateral held by the vault contract
+        uint256 debtAmount; // The amount of stable coin that was minted against the collateral
+    }
+
+    // Event definition
+    event Transfer(address indexed from, address indexed to, uint256 value);
+    event Deposit(uint256 amountDeposited, uint256 amountMinted);
 
     /**
      * Mints stable coin to the vault contract.
@@ -39,7 +48,7 @@ contract Vault is IVault, Ownable {
         // check if minted
         return 1;
         // check if minted
-        return 0;
+        //return 0;
     }
 
     /** 
@@ -49,13 +58,13 @@ contract Vault is IVault, Ownable {
     function deposit(uint256 amountToDeposit, uint256 _mintAmount)
         external
         payable
-        override
+        
     {
         uint256 amountToMint = amountToDeposit; // => for now
         token.transferFrom(msg.sender, address(this), amountToDeposit);
         vaults[msg.sender].collateralAmount += amountToDeposit;
         vaults[msg.sender].debtAmount += amountToMint; // for now
-        emit Deposit(amountToDeposit, amountToMint);
+       // emit Deposit(amountToDeposit, amountToMint);
     }
 
     // function controller(uint256 amountToDeposit, uint256 _mintAmount)
@@ -74,7 +83,7 @@ contract Vault is IVault, Ownable {
     function getVault(address userAddress)
         external
         view
-        override
+       
         returns (Vault memory vault)
     {
         return vaults[userAddress];
@@ -83,7 +92,7 @@ contract Vault is IVault, Ownable {
     function estimateCollateralAmount(uint256 repaymentAmount)
         external
         view
-        override
+     
         returns (uint256 collateralAmount)
     {
         // this will get the rate from the oracle and estimate the collateralAmount

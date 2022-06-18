@@ -8,12 +8,14 @@ import "@openzeppelin/contracts/token/ERC20/IERC20.sol";
 contract TokenSwap{ 
    IERC20 public immutable token;
     uint256 public totalSupply;
-    uint256 public amountToken1;
+    uint256 public InputToken;
+    uint256 public SwapingToken;
     uint256 public swapamount;
     uint256 public conversionrate;
 
     constructor(address _token) {
         token = IERC20(_token);
+        conversionrate = getZARUSD();
         swapamount = amountToken1*conversionrate;
     }
 
